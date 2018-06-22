@@ -23,7 +23,22 @@ namespace SustentabilidadeEscolar.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                // BEGIN04
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+                // END04
+
+            });
+
             services.AddMvc();
+            services.AddMongo(Configuration.GetSection("Mongo"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,6 +48,8 @@ namespace SustentabilidadeEscolar.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("AllowAll");
 
             app.UseMvc();
         }
