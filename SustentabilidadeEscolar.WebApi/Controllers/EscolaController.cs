@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -19,11 +21,18 @@ namespace SustentabilidadeEscolar.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]Models.Activity model)
         {
-            await place.InsertOneAsync(model);
-            return Ok(model);
-        }
+            try
+            {
+                await place.DeleteOneAsync(c => c.Key == model.Key);
 
-        
+                await place.InsertOneAsync(model);
+                return Ok(model);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(model);
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> AllPlaces()
@@ -31,6 +40,15 @@ namespace SustentabilidadeEscolar.WebApi.Controllers
             var allPlacesCursor = await place.FindAsync(FilterDefinition<Models.Activity>.Empty);
             var allPlaces = await allPlacesCursor.ToListAsync();
             return Ok(allPlaces);
+        }
+
+        [HttpGet]
+        [Route("{key}")]
+        public async Task<IActionResult> Get(string key)
+        {
+            var allPlacesCursor = await place.FindAsync(model => model.Key == key);
+            var allPlaces = await allPlacesCursor.ToListAsync();
+            return Ok(allPlaces.FirstOrDefault());
         }
     }
 }
