@@ -19,6 +19,7 @@ namespace SustentabilidadeEscolar.WebApi.Models
         public string LastName { get; set; }
         public Address Address { get; set; }
         public DateTime InsertDate { get; set; }
+        public string  Password { get; set; }
 
     }
 }

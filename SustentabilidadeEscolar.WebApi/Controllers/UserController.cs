@@ -19,18 +19,38 @@ namespace SustentabilidadeEscolar.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]Models.User model)
         {
-            var builder = Builders<Models.User>.Filter;
-            var filter = builder.Lt("Email", model.Email) &
-                         builder.Eq("Provider", model.Provider);
-
-            //var filter = Builders<>.Filter.Eq("Email", model.Email);
-            var currentUser = await user.Find(filter).FirstOrDefaultAsync();
+            var currentUser = await user.Find(c => c.Email == model.Email &&
+                                                   c.Provider == model.Provider).FirstOrDefaultAsync();
 
             if (currentUser != null)
                 return Ok(currentUser);
 
             await user.InsertOneAsync(model);
             return Ok(model);
+        }
+
+        // POST: User/Create
+        [HttpPost]
+        [Route("auth/")]
+        public async Task<IActionResult> Auth([FromBody]Models.User model)
+        {
+            var currentUser = await user.Find(c => c.Email == model.Email &&
+                                                   c.Password == model.Password)
+                                                   .FirstOrDefaultAsync();
+
+            if (currentUser != null)
+                return Ok(currentUser);
+
+            return Ok(null);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> AllUsers()
+        {
+            var allPeopleCursor = await user.FindAsync(FilterDefinition<Models.User>.Empty);
+            var allPeople = await allPeopleCursor.ToListAsync();
+            return Ok(allPeople);
         }
     }
 }
