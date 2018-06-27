@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 
 namespace SustentabilidadeEscolar.WebApi.Models
@@ -17,6 +18,12 @@ namespace SustentabilidadeEscolar.WebApi.Models
 
     public class Activity
     {
+        public Activity()
+        {
+            Key = Guid.NewGuid().ToString();
+        }
+
+        public string Key { get; set; }
         public ObjectId Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
