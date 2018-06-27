@@ -26,5 +26,6 @@ namespace SustentabilidadeEscolar.WebApi.Models
         public string Phone { get; set; }
         public string Location { get; set; }
         public Position Position { get; set; }
+
     }
 }
